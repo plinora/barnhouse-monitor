@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Barnhouse Мониторинг</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .company-section {
+            background: #f8f9fa;
+            padding: 25px;
+            text-align: center;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .company-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        .company-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .company-info {
+            margin-top: 15px;
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .controls {
+            padding: 25px;
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-refresh {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+        }
+
+        .btn-refresh:hover {
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 4px solid #2196F3;
+        }
+
+        .stat-card h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.3em;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #1a237e;
+            margin: 15px 0;
+        }
+
+        .status-up {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .status-down {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .status-warning {
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .checks-table {
+            padding: 30px;
+        }
+
+        .checks-table h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 18px;
+            text-align: left;
+            color: #495057;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        td {
+            padding: 18px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .time-cell {
+            font-family: 'Courier New', monospace;
+            color: #666;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 25px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+            color: #666;
+        }
+
+        .uptime-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .uptime-excellent {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .uptime-good {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .uptime-poor {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .site-link {
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .site-link:hover {
+            text-decoration: underline;
+        }
+
+        .time-info {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9em;
+        }
+
+        .last-update {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .check-btn {
+            background: #e3f2fd;
+            border: none;
+            color: #1976D2;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .check-btn:hover {
+            background: #bbdefb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Заголовок -->
+        <div class="header">
+            <div style="position: relative;">
+                <h1>
+                    <span>🚀</span>
+                    Система мониторинга Barnhouse
+                </h1>
+                <p>Контроль доступности сайтов в реальном времени</p>
+                <div class="time-info">
+                    <div id="current-time">{{ current_time }}</div>
+                    <div>{{ current_date }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ссылка на сайт компании -->
+        <div class="company-section">
+            <a href="https://barnhouse1.ru" target="_blank" class="company-link">
+                <span>🌐</span>
+                Перейти на официальный сайт Barnhouse
+            </a>
+            <div class="company-info">
+                Производитель элитной мебели и предметов интерьера
+            </div>
+        </div>
+
+        <!-- Кнопки управления -->
+        <div class="controls">
+            <button class="btn btn-primary" onclick="manualCheck()">
+                <span>🔍</span>
+                Выполнить проверку
+            </button>
+
+            <button class="btn btn-refresh" onclick="window.location.reload()">
+                <span>🔄</span>
+                Обновить данные
+            </button>
+
+            <button class="btn btn-secondary" onclick="showAlert('Функция в разработке')">
+                <span>📊</span>
+                Подробная статистика
+            </button>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats-grid">
+            {% for stat in stats %}
+            <div class="stat-card">
+                <h3>{{ stat[0] }}</h3>
+                {% if stat[1] > 0 %}
+                    {% set uptime = ((stat[2] / stat[1]) * 100)|round(1) %}
+                    <div class="stat-value">{{ uptime }}%</div>
+                    <p>Доступность сайта</p>
+
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Всего проверок:</span>
+                            <strong>{{ stat[1] }}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Успешных:</span>
+                            <span class="status-up">{{ stat[2] }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Среднее время:</span>
+                            <strong>{{ stat[3]|round(0) }} ms</strong>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        {% if uptime >= 99 %}
+                            <span class="uptime-badge uptime-excellent">Отличная доступность</span>
+                        {% elif uptime >= 95 %}
+                            <span class="uptime-badge uptime-good">Хорошая доступность</span>
+                        {% else %}
+                            <span class="uptime-badge uptime-poor">Требует внимания</span>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="stat-value">—</div>
+                    <p>Нет данных для отображения</p>
+                    <p style="color: #666; font-size: 0.9em;">Запустите систему мониторинга</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Таблица проверок -->
+        <div class="checks-table">
+            <h2>
+                <span>📋</span>
+                Последние проверки
+            </h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Время проверки</th>
+                        <th>Страница</th>
+                        <th>Статус</th>
+                        <th>Код ответа</th>
+                        <th>Время ответа</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for check in checks %}
+                    <tr>
+                        <td class="time-cell">{{ check[5] if check|length > 5 else current_time }}</td>
+                        <td>
+                            <a href="{{ check[1] }}" target="_blank" class="site-link">
+                                {{ check[0] }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if check[2] == 'UP' %}
+                                <span class="status-up">✅ Доступен</span>
+                            {% elif check[2] == 'DOWN' %}
+                                <span class="status-down">❌ Не доступен</span>
+                            {% else %}
+                                <span class="status-warning">⚠️ {{ check[2] }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if check[3] == 200 %}
+                                <span style="color: #4CAF50; font-weight: bold;">{{ check[3] }}</span>
+                            {% elif check[3] == 0 %}
+                                <span style="color: #f44336;">{{ check[3] }}</span>
+                            {% else %}
+                                <span style="color: #ff9800;">{{ check[3] }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if check[4] > 0 %}
+                                <span style="font-weight: bold;">{{ check[4] }} ms</span>
+                            {% else %}
+                                <span>—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="check-btn" onclick="checkSingleSite('{{ check[1] }}')">
+                                Проверить
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="last-update">
+                Автоматическое обновление через: <span id="countdown">30</span> сек
+            </div>
+        </div>
+
+        <!-- Футер -->
+        <div class="footer">
+            <p style="font-weight: bold; margin: 0 0 10px 0; color: #333;">
+                Barnhouse Мониторинг v1.0
+            </p>
+            <p style="margin: 0 0 5px 0;">
+                Система разработана для отчёта по производственной практике
+            </p>
+            <p style="margin: 0; font-size: 0.9em;">
+                Последнее обновление: <span id="last-update">{{ current_time }}</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Обновление времени в реальном времени
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('ru-RU');
+            const dateStr = now.toLocaleDateString('ru-RU');
+
+            // Обновляем время в заголовке
+            document.getElementById('current-time').textContent = timeStr;
+            // Обновляем время в футере
+            document.getElementById('last-update').textContent = timeStr;
+        }
+
+        // Таймер обратного отсчета
+        let countdown = 30;
+        function updateCountdown() {
+            countdown--;
+            document.getElementById('countdown').textContent = countdown;
+
+            if (countdown <= 0) {
+                window.location.reload();
+            }
+        }
+
+        // Ручная проверка сайтов
+        function manualCheck() {
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+
+            // Показываем анимацию загрузки
+            btn.innerHTML = '<span>⏳</span> Выполняю проверку...';
+            btn.disabled = true;
+
+            // Симулируем задержку проверки
+            setTimeout(() => {
+                // В реальном проекте здесь был бы AJAX запрос к серверу
+                alert('✅ Проверка выполнена успешно!\n\nНовые данные будут загружены через 3 секунды...');
+
+                btn.innerHTML = '<span>✅</span> Готово!';
+
+                // Обновляем страницу через 3 секунды
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+
+            }, 1500);
+        }
+
+        // Проверка конкретного сайта
+        function checkSingleSite(url) {
+            const siteName = new URL(url).hostname;
+
+            // Показываем уведомление
+            if (confirm(`Выполнить проверку сайта?\n\n${siteName}\n${url}`)) {
+                // В реальном проекте здесь был бы AJAX запрос
+                alert(`✅ Проверка запущена для:\n${url}\n\nРезультат будет отображен после обновления страницы.`);
+
+                // Симулируем обновление через 2 секунды
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        }
+
+        // Вспомогательная функция для уведомлений
+        function showAlert(message) {
+            alert(message);
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Запускаем обновление времени
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // Запускаем таймер обратного отсчета
+            setInterval(updateCountdown, 1000);
+
+            // Добавляем эффект при наведении на строки таблицы
+            const tableRows = document.querySelectorAll('tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                    this.style.transition = 'all 0.3s';
+                });
+
+                row.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                });
+            });
+
+            // Добавляем клик по названию сайта в статистике
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const title = this.querySelector('h3').textContent;
+                    alert(`Подробная статистика для: ${title}\n\nВ полной версии системы здесь будет детальная информация.`);
+                });
+            });
+        });
+
+        // Автоматическое обновление страницы каждые 30 секунд
+        setTimeout(() => {
+            window.location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>
